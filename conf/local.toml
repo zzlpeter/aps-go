@@ -24,17 +24,17 @@
         max_size = 100   # 文件大小为100M
         max_backups = 7  # 备份数量
         max_age = 30     # 最多保留多少天
-        file = "/Users/zhangzhiliang/tiger/logs/aps/default.log"
+        file = "/data0/logs/aps-go/default.log"
     [log.producer]
         max_size = 100   # 文件大小为100M
         max_backups = 7  # 备份数量
         max_age = 30     # 最多保留多少天
-        file = "/Users/zhangzhiliang/tiger/logs/aps/producer.log"
+        file = "/data0/logs/aps-go/producer.log"
     [log.consumer]
         max_size = 100   # 文件大小为100M
         max_backups = 7  # 备份数量
         max_age = 30     # 最多保留多少天
-        file = "/Users/zhangzhiliang/tiger/logs/aps/consumer.log"
+        file = "/data0/logs/aps-go/consumer.log"
 
 [basic]
     task_redis_queue = "aps:tasks:queue"

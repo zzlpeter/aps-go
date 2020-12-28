@@ -45,7 +45,7 @@ func (c *consumerStruct) do(t models.TaskQueueStruct) {
 		if r != nil {
 			status = "fail"
 			ext["error"] = string(debug.Stack())
-			aps_log.LogRecord("consumer", t.TraceId, aps_log.ERROR, fmt.Sprintf("执行函数:%v 异常", t.ExecuteFunc), "err", r)
+			aps_log.LogRecord("consumer", t.TraceId, aps_log.ERROR, fmt.Sprintf("执行函数:%v 异常", t.ExecuteFunc), "err", string(debug.Stack()))
 		}
 		db.Model(&models.TaskExecute{}).Where("id = ?", t.SubTaskId).Update("status", status)
 		if len(ext) != 0 {
