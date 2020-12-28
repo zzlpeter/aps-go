@@ -1,0 +1,40 @@
+[mysql]
+    [mysql.default]
+        host = "localhost"
+        port = 3306
+        db = "task"
+        username = "root"
+        password = ""
+        max_con = 1
+        max_idle = 50
+        timeout = 10
+
+[redis]
+    [redis.default]
+        host = "127.0.0.1"
+        port = 6379
+        db = 2
+        password = ""
+        max_idle = 6
+        max_active = 10
+        idle_timeout = 60
+
+[log]
+    [log.default]
+        max_size = 100   # 文件大小为100M
+        max_backups = 7  # 备份数量
+        max_age = 30     # 最多保留多少天
+        file = "/Users/zhangzhiliang/tiger/logs/aps/default.log"
+    [log.producer]
+        max_size = 100   # 文件大小为100M
+        max_backups = 7  # 备份数量
+        max_age = 30     # 最多保留多少天
+        file = "/Users/zhangzhiliang/tiger/logs/aps/producer.log"
+    [log.consumer]
+        max_size = 100   # 文件大小为100M
+        max_backups = 7  # 备份数量
+        max_age = 30     # 最多保留多少天
+        file = "/Users/zhangzhiliang/tiger/logs/aps/consumer.log"
+
+[basic]
+    task_redis_queue = "aps:tasks:queue"
