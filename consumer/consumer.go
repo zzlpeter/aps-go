@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
-	"github.com/zzlpeter/aps-go/consumer/tasks"
 	aps_log "github.com/zzlpeter/aps-go/libs/log"
 	"github.com/zzlpeter/aps-go/libs/mysql"
 	aps_redis "github.com/zzlpeter/aps-go/libs/redis"
@@ -15,18 +14,13 @@ import (
 	"time"
 )
 
-// 新增任务需要在此进行注册
-var taskKeyFuncMapper = map[string]func(s models.TaskQueueStruct){
-	"TestCron": tasks.TestCron,
-}
 
-// please do not change below !!!
 var queue = tomlc.Config{}.BasicConf()["task_redis_queue"].(string)
 type consumerStruct struct {}
 
 // callbackFunc 查找回调函数
 func (c *consumerStruct) callbackFunc(t models.TaskQueueStruct) func(t models.TaskQueueStruct) {
-	f, ok := taskKeyFuncMapper[t.ExecuteFunc]
+	f, ok := TaskKeyFuncMapper[t.ExecuteFunc]
 	if ok {
 		return f
 	}

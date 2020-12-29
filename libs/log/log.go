@@ -34,7 +34,6 @@ func getLogger() {
 func makeLogger() {
 	logConfS := tomlc.Config{}.LogConfS()
 	for alias, conf := range logConfS {
-		fmt.Println(alias, conf)
 		// 获取dir路径
 		dir := filepath.Dir(conf["file"].(string))
 		// 判断dir路径是否存在

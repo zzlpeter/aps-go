@@ -37,6 +37,7 @@ type producerStruct struct {
 
 // msg2Q 发布消息到队列
 func (p *producerStruct) msg2Q(t models.Task) {
+	// 判断环境变量是否为 IS_KILLED
 	isKilled := utils.Environ{}.Get("IS_KILLED")
 	if isKilled == "IS_KILLED" {
 		aps_log.LogRecord("producer", "", aps_log.WARNING, "producer环境变量为IS_KILLED,停止生产消息")
@@ -46,14 +47,14 @@ func (p *producerStruct) msg2Q(t models.Task) {
 	aps_log.LogRecord("producer", "", aps_log.INFO, fmt.Sprintf("方法:%v 开始生成消息", t.ExecuteFunc))
 	rds := redis.GetRedisPool("default").Get()
 	defer rds.Close()
-
+	// 插入子任务到db
 	tid := utils.GenUUID()
 	err, subTaskId := p.addSubTask(t, tid)
 	if err != nil {
 		aps_log.LogRecord("producer", tid, aps_log.ERROR, "插入子任务记录失败", "err", err.Error(), "task_key", t.TaskKey, "spec", t.Spec)
 		return
 	}
-
+	// 序列化
 	msgStruct := models.TaskQueueStruct{
 		TraceId: tid,
 		SubTaskId: subTaskId,
@@ -65,6 +66,7 @@ func (p *producerStruct) msg2Q(t models.Task) {
 		aps_log.LogRecord("producer", tid, aps_log.ERROR, "序列化结构体失败", "err", err.Error(), "task_key", t.TaskKey, "spec", t.Spec)
 		return
 	}
+	// 发布消息到队列
 	_, err = rds.Do("LPUSH", queue, js)
 	if err != nil {
 		aps_log.LogRecord("producer", tid, aps_log.ERROR, "producer发布消息失败", "err", err.Error(), "task_key", t.TaskKey, "spec", t.Spec)
