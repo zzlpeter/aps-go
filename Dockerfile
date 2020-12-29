@@ -11,4 +11,6 @@ COPY . $GOPATH/src/github.com/zzlpeter/aps-go
 
 RUN go build .
 
+EXPOSE 6060
+
 CMD ["./aps-go", "-action=", "${action}"]

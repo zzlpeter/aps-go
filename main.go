@@ -10,10 +10,12 @@ import (
 	"github.com/zzlpeter/aps-go/producer"
 	"github.com/zzlpeter/aps-go/consumer"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+	_ "net/http/pprof"
 )
 
 // 生产者
@@ -50,6 +52,11 @@ func signalTerm(c chan os.Signal) {
 	os.Exit(1)
 }
 
+// 启动pprof
+func listenPProf() {
+	http.ListenAndServe("0.0.0.0:6060", nil)
+}
+
 func main() {
 	// 捕获TERM信号 - 优雅重启
 	ch := make(chan os.Signal)
@@ -59,8 +66,10 @@ func main() {
 	// 解析参数、启动程序
 	flag.Parse()
 	if *action == "consumer" {
+		go listenPProf()
 		apsConsumer()
 	} else if *action == "producer" {
+		go listenPProf()
 		apsProducer()
 	} else {
 		log.Fatalf("action: %v 参数无效，可选值为consumer/producer", *action)
