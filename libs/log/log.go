@@ -150,6 +150,8 @@ func makeZapFields(tid string, kvs ...interface{}) (error, []zap.Field) {
 	// 获取调用栈信息
 	_, file, line, _ := runtime.Caller(2)
 	arr = append(arr, zap.String("file", file), zap.Int("line", line))
+	// 设置时间戳信息
+	arr = append(arr, zap.Int64("timestamp", utils.StampSecond()))
 
 	return nil, arr
 }

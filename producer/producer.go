@@ -10,7 +10,6 @@ import (
 	"github.com/zzlpeter/aps-go/libs/utils"
 	"github.com/zzlpeter/aps-go/models"
 	"sync"
-	"time"
 )
 
 type _job struct {
@@ -36,9 +35,14 @@ type producerStruct struct {
 	mu 				sync.Mutex
 }
 
-// 发布消息到队列
+// msg2Q 发布消息到队列
 func (p *producerStruct) msg2Q(t models.Task) {
-	fmt.Println("msg2q", time.Now())
+	isKilled := utils.Environ{}.Get("IS_KILLED")
+	if isKilled == "IS_KILLED" {
+		aps_log.LogRecord("producer", "", aps_log.WARNING, "producer环境变量为IS_KILLED,停止生产消息")
+		return
+	}
+
 	aps_log.LogRecord("producer", "", aps_log.INFO, fmt.Sprintf("方法:%v 开始生成消息", t.ExecuteFunc))
 	rds := redis.GetRedisPool("default").Get()
 	defer rds.Close()
@@ -68,7 +72,7 @@ func (p *producerStruct) msg2Q(t models.Task) {
 	}
 }
 
-// 插入执行记录到子任务表
+// addSubTask 插入执行记录到子任务表
 func (p *producerStruct) addSubTask(t models.Task, tid string) (error, uint) {
 	insert := models.TaskExecute{TaskId: t.Id, TraceId: tid, Extra: map[string]interface{}{}, Status: "todo"}
 	db, _ := mysql.GetDbConn("default")
@@ -78,7 +82,7 @@ func (p *producerStruct) addSubTask(t models.Task, tid string) (error, uint) {
 	return nil, insert.Id
 }
 
-// 添加任务
+// addJob 添加任务到cron
 func (p *producerStruct) addJob(t models.Task) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
@@ -93,7 +97,14 @@ func (p *producerStruct) addJob(t models.Task) {
 	p.jobsSpecMapper[t.Id] = _job{jid, t.Spec}
 }
 
+// ProduceJobs2Queue 同步任务到cron管理器
 func (p *producerStruct) ProduceJobs2Queue() {
+	isKilled := utils.Environ{}.Get("IS_KILLED")
+	if isKilled == "IS_KILLED" {
+		aps_log.LogRecord("producer", "", aps_log.WARNING, "producer环境变量为IS_KILLED,停止同步任务")
+		return
+	}
+
 	db, _ := mysql.GetDbConn("default")
 	tasks := []models.Task{}
 	db.Select([]string{"id", "spec", "params", "is_valid", "execute_func"}).Find(&tasks)
