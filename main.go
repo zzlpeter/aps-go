@@ -9,7 +9,6 @@ import (
 	_ "github.com/zzlpeter/aps-go/libs/mysql"
 	_ "github.com/zzlpeter/aps-go/libs/redis"
 	"github.com/zzlpeter/aps-go/libs/utils"
-	_ "github.com/zzlpeter/aps-go/libs/utils"
 	"github.com/zzlpeter/aps-go/producer"
 	"log"
 	"os"
