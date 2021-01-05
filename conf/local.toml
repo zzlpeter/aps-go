@@ -8,6 +8,7 @@
         max_con = 1
         max_idle = 50
         timeout = 10
+        echo = true
 
 [redis]
     [redis.default]
@@ -24,17 +25,22 @@
         max_size = 100   # 文件大小为100M
         max_backups = 7  # 备份数量
         max_age = 30     # 最多保留多少天
-        file = "/data0/logs/aps-go/default.log"
+        file = "/data0/logs/aps/default.log"
     [log.producer]
         max_size = 100   # 文件大小为100M
         max_backups = 7  # 备份数量
         max_age = 30     # 最多保留多少天
-        file = "/data0/logs/aps-go/producer.log"
+        file = "/data0/logs/aps/producer.log"
     [log.consumer]
         max_size = 100   # 文件大小为100M
         max_backups = 7  # 备份数量
         max_age = 30     # 最多保留多少天
-        file = "/data0/logs/aps-go/consumer.log"
+        file = "/data0/logs/aps/consumer.log"
+    [log.mysql]
+        max_size = 100   # 文件大小为100M
+        max_backups = 7  # 备份数量
+        max_age = 30     # 最多保留多少天
+        file = "/data0/logs/aps/mysql.log"
 
 [basic]
     task_redis_queue = "aps:tasks:queue"
